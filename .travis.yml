@@ -12,10 +12,10 @@ env:
   - DJANGO="django==1.4.2"
 
 install:
- - pip install -r requirements/external_apps.txt
- - pip install -r requirements/test_apps.txt
- - pip install coverage coveralls
- - pip install $DJANGO
+ - pip install -r requirements/external_apps.txt --use-wheel
+ - pip install -r requirements/test_apps.txt --use-wheel
+ - pip install coverage coveralls --use-wheel
+ - pip install $DJANGO --use-wheel
 
 script:
   - coverage run --source=basic_email setup.py test
