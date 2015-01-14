@@ -1,0 +1,12 @@
+*.pyc
+.pypirc
+*~
+.DS_Store
+build
+*.egg*
+doc/.build/*
+dist/*
+.tox/*
+
+coverage.xml
+six*
