@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import django
 
 PROJECT_DIR = os.path.dirname(__file__)
 
@@ -21,8 +20,6 @@ MIDDLEWARE_CLASSES = (
 )
 
 TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'
-if django.VERSION[:2] < (1, 6):
-    TEST_RUNNER = 'discover_runner.DiscoverRunner'
 
 ROOT_URLCONF = TEST_PROJ + '.urls'
 
