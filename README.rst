@@ -28,3 +28,29 @@ Documentation
 =============
 
 TBD
+
+
+Testing
+=======
+Require Tox>=1.8
+
+Testing all platforms
+
+::
+
+    tox
+
+Testing one platforms
+
+::
+
+    tox -e <platform>
+
+Example:
+
+::
+
+    tox -e py27-django-17
+
+
+

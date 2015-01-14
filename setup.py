@@ -38,7 +38,7 @@ download_url = url_schema % (package_name, package_name,
 
 setup(
     name=package_name,
-    test_suite='basic_email.test_runner.main',
+    test_suite='test_runner.main',
     version=basic_email.__version__,
     description=basic_email.__doc__,
     author=basic_email.__author__,

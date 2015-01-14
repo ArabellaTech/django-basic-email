@@ -9,4 +9,5 @@ dist/*
 .tox/*
 
 coverage.xml
+.coverage
 six*
