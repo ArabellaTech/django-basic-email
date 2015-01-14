@@ -23,7 +23,7 @@ def send_email(template, to, subject, variables={}, fail_silently=False,
     replace_variables['protocol'] = protocol
     domain = variables['site'].domain
     replace_variables['domain'] = domain
-    for key, value in replace_variables.iteritems():
+    for key, value in replace_variables.items():
         if not value:
             value = ''
         html = html.replace('{%s}' % key.upper(), value)
