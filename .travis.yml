@@ -6,6 +6,7 @@ python:
   - "3.4"
 
 env:
+  - DJANGO="django==1.7 --use-mirrors"
   - DJANGO="django==1.6 --use-mirrors"
   - DJANGO="django==1.5 --use-mirrors"
   - DJANGO="django==1.4.2 --use-mirrors"
@@ -25,6 +26,8 @@ matrix:
       env: DJANGO="django==1.4.2 --use-mirrors"
     - python: "3.4"
       env: DJANGO="django==1.4.2 --use-mirrors"
+    - python: "2.6"
+      env: DJANGO="django==1.7 --use-mirrors"
 
 after_success:
   - coverage report --omit="basic_email/tests/*" -m
