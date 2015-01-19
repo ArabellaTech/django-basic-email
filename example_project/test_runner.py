@@ -6,13 +6,13 @@ try:
 except ImportError:
     coverage = None
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'testproj.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'example_project.settings'
 current_dirname = os.path.dirname(__file__)
 sys.path.insert(0, current_dirname)
 sys.path.insert(0, os.path.join(current_dirname, '..'))
 
 
-from testproj import settings
+from example_project import settings
 
 
 def run_tests(settings):
@@ -24,7 +24,7 @@ def run_tests(settings):
 
     TestRunner = get_runner(settings)
     test_runner = TestRunner(interactive=False)
-    failures = test_runner.run_tests(['basic_email'])
+    failures = test_runner.run_tests(['tests'])
     return failures
 
 

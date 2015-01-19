@@ -24,14 +24,55 @@ This Django Basic Email enable you to create emails in easy way.
 
 This CMS is know to work on Django 1.4+ with Python 2.6+ and 3.3+
 
-Documentation
+Instalation
+===========
+
+Get package or install by pip::
+
+    pip install django-basic-email
+
+
+Configuration
 =============
 
-TBD
+Modify your ``settings.py``. Add ``'basic_email'`` to your
+``INSTALLED_APPS`` like this:
+
+.. code-block:: python
+
+    INSTALLED_APPS = (
+        ...
+        'basic_email',
+    )
+
+Usage
+=====
+
+Create template ``emails/email_example.html`` and send email:
+
+.. code-block:: python
+
+    from basic_email.send import send_email
+    send_email('example', 'joe@doe.com', 'Hello')
+
+Options:
+ - ``template`` template name from scheme ``emails/email_<name>.html``
+ - ``email`` - receiver email
+ - ``subject`` - subject email
+ - ``variables`` - dict with variables to pass to template render
+ - ``fail_silently`` - flag if error in sending email should raise (default ``False``)
+ - ``replace_variables`` - dict with variables to replace in template
+ - ``reply_to`` - reply_to header
+ - ``attachments`` - attachments list (file objects)
+ - ``memory_attachments`` - attachments list (string objects)
 
 
 Testing
 =======
+
+Automated tests
+---------------
+
 Require Tox>=1.8
 
 Testing all platforms
@@ -52,5 +93,30 @@ Example:
 
     tox -e py27-django-17
 
+Testing interface
+-----------------
 
+1. Fork repository (if you don't have write permission).
+2. Create a branch.
+3. Create virtual environment::
 
+    # Preparing virtualenv paths (optional if your profile doesn't have it).
+    export WORKON_HOME=~/Envs
+    source /usr/bin/virtualenvwrapper_lazy.sh
+    # or: source /usr/local/bin/virtualenvwrapper_lazy.sh
+
+    # Start by creating a virtual environment using the helper scripts provided. Do not include the systems site-packages.
+    mkvirtualenv django-basic-email --no-site-packages
+    workon django-basic-email
+
+4. Install ``django-basic-email`` in editable mode::
+
+    pip install -e .
+
+5. Run example project::
+
+    cd example_project && ./manage.py migrate && ./manage.py runserver
+
+6. Add feature or fix a bug.
+7. Push code.
+8. Create a Pull Request.

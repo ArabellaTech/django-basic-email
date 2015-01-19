@@ -1,27 +1,35 @@
 # -*- coding: utf-8 -*-
 import os
 
-PROJECT_DIR = os.path.dirname(__file__)
+abspath = lambda *p: os.path.abspath(os.path.join(*p))
 
-TEST_PROJ = 'tests'
+PROJECT_DIR = os.path.dirname(__file__)
+PROJECT_ROOT = abspath(os.path.dirname(__file__))
+
 SITE_ID = 1
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',
-    }
+        'NAME': abspath(PROJECT_ROOT, '.hidden.db'),
+        'TEST_NAME': ':memory:',
+    },
 }
 
-SECRET_KEY = 'Fooooo'
+SECRET_KEY = 'CHANGE_THIS_TO_SOMETHING_UNIQUE_AND_SECURE'
 
 MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 )
 
 TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'
 
-ROOT_URLCONF = TEST_PROJ + '.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_DIR, 'templates'),
@@ -33,8 +41,13 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.sites',
+    'django.contrib.staticfiles',
     'basic_email',
+    'tests',
 )
+
+
+STATIC_URL = '/static/'
 
 COVERAGE_EXCLUDE_MODULES = (
     "basic_email.migrations.*",
