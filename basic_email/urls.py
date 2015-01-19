@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
 
 from basic_email.views import FakeEmailSend
