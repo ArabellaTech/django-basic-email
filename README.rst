@@ -70,6 +70,13 @@ Options:
 Testing
 =======
 
+1. Fork repository (if you don't have write permission).
+2. Create a branch.
+3. Add feature or fix a bug.
+4. Push code.
+5. Create a Pull Request.
+
+
 Automated tests
 ---------------
 
@@ -96,9 +103,7 @@ Example:
 Testing interface
 -----------------
 
-1. Fork repository (if you don't have write permission).
-2. Create a branch.
-3. Create virtual environment::
+1. Create virtual environment::
 
     # Preparing virtualenv paths (optional if your profile doesn't have it).
     export WORKON_HOME=~/Envs
@@ -109,14 +114,10 @@ Testing interface
     mkvirtualenv django-basic-email --no-site-packages
     workon django-basic-email
 
-4. Install ``django-basic-email`` in editable mode::
+2. Install ``django-basic-email`` in editable mode::
 
     pip install -e .
 
-5. Run example project::
+3. Run example project::
 
     cd example_project && ./manage.py migrate && ./manage.py runserver
-
-6. Add feature or fix a bug.
-7. Push code.
-8. Create a Pull Request.
