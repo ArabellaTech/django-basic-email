@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.conf import settings
 from django.template import TemplateDoesNotExist
 
-from earnest.emails.send import send_email
+from basic_email.send import send_email
 
 
 class FakeEmailSend(TemplateView):
