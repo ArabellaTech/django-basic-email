@@ -11,3 +11,4 @@ dist/*
 coverage.xml
 .coverage
 six*
+local_settings.py
