@@ -7,7 +7,8 @@ from basic_email.send import send_email
 
 
 class FakeEmailSend(TemplateView):
-    template_name = 'emails/fake.html'
+    # template_name = 'emails/fake.html'
+    template_name = 'test.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(FakeEmailSend, self).get_context_data(*args, **kwargs)
@@ -19,3 +20,7 @@ class FakeEmailSend(TemplateView):
             except TemplateDoesNotExist:
                 context['template_does_not_exist'] = True
         return context
+
+
+class ListEmailTemplatesView(TemplateView):
+    template_name = "admin/list.html"
