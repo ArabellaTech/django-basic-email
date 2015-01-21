@@ -15,7 +15,7 @@
         <ul>
             {% for f in files %}
                 <li>
-                    <a href="{{f.url}}" target="_blank">{{f.name}}</a>
+                    <a href="{% url 'preview-email-templates' %}?template={{f}}" target="_blank">{{f}}</a>
                 </li>
             {% endfor %}
         </ul>

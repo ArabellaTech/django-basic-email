@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from django.views.generic import TemplateView
 from django.template import TemplateDoesNotExist
 from django.conf import settings
@@ -26,6 +27,24 @@ class ListEmailTemplatesView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ListEmailTemplatesView, self).get_context_data(*args, **kwargs)
-        templates_directory = settings.BASIC_EMAIL_DIRECTORY
-        print (templates_directory)
+        templates_dirs = [os.path.join(d, settings.BASIC_EMAIL_DIRECTORY) for d in settings.TEMPLATE_DIRS]
+        fileList = []
+        for rootdir in templates_dirs:
+            for root, subFolders, files in os.walk(rootdir):
+                for file in files:
+                    if file.startswith('email_') and file.endswith('.html'):
+                        fileList.append(file)
+        context['files'] = fileList
+        return context
+
+
+class PreviewEmailView(TemplateView):
+    template_name = 'admin/preview.html'
+
+    def get_template_names(self, *args, **kwargs):
+        return [os.path.join(settings.BASIC_EMAIL_DIRECTORY, self.request.GET.get('template'))]
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(PreviewEmailView, self).get_context_data(*args, **kwargs)
+        context['template'] = self.request.GET.get('template')
         return context

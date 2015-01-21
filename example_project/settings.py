@@ -36,7 +36,7 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_DIR, 'templates'),
 )
 
-BASIC_EMAIL_DIRECTORY = os.path.join(PROJECT_DIR, 'templates/emails')
+BASIC_EMAIL_DIRECTORY = 'emails'
 
 INSTALLED_APPS = (
     'django.contrib.auth',

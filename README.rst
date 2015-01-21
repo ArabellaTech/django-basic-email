@@ -49,7 +49,7 @@ Add BASIC_EMAILS_DIRECTORY variable and point it to the directory you will use. 
 
 .. code-block:: python
 
-    BASIC_EMAIL_DIRECTORY = os.path.join(PROJECT_DIR, 'templates/emails')
+    BASIC_EMAIL_DIRECTORY = 'emails'
 
 
 Usage
