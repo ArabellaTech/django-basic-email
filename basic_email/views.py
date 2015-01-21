@@ -39,12 +39,12 @@ class ListEmailTemplatesView(TemplateView):
 
 
 class PreviewEmailView(TemplateView):
-    template_name = 'admin/preview.html'
 
     def get_template_names(self, *args, **kwargs):
+        if not self.request.GET.get('template'):
+            raise NameError("?template=... is required")
         return [os.path.join(settings.BASIC_EMAIL_DIRECTORY, self.request.GET.get('template'))]
 
     def get_context_data(self, *args, **kwargs):
         context = super(PreviewEmailView, self).get_context_data(*args, **kwargs)
-        context['template'] = self.request.GET.get('template')
         return context
