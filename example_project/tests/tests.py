@@ -2,6 +2,7 @@
 from django.test import TestCase
 from django.test.client import Client
 from django.core import mail
+from django.template.base import TemplateDoesNotExist
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -33,10 +34,17 @@ class EmailsTests(TestCase):
         response = self.client.get(reverse('preview-email-templates'))
         expected_url = '/admin/login/?next=/emails/admin/preview/'
         self.assertRedirects(response, expected_url, status_code=302, target_status_code=200, msg_prefix='')
-
+        # trying to access w/o template parameter will raise an error
         self.client.login(password=self.password, username=self.admin.username)
-        response = self.client.get(reverse('preview-email-templates'))
-        self.assertEqual(response.status_code, 500)
+        self.assertRaises(NameError, self.client.get, reverse('preview-email-templates'))
+
+        # not existing template
+        self.assertRaises(TemplateDoesNotExist, self.client.get,
+                          reverse('preview-email-templates') + '?template=non_existing_fail')
+
+        # proper
+        response = self.client.get(reverse('preview-email-templates') + '?template=email_start.html')
+        self.assertEqual(response.status_code, 200)
 
     def test_variables_list(self):
         pass
