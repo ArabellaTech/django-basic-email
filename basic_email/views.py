@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.views.generic import TemplateView
-from django.conf import settings
 from django.template import TemplateDoesNotExist
-
+from django.conf import settings
 from basic_email.send import send_email
 
 
@@ -24,3 +23,9 @@ class FakeEmailSend(TemplateView):
 
 class ListEmailTemplatesView(TemplateView):
     template_name = "admin/list.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ListEmailTemplatesView, self).get_context_data(*args, **kwargs)
+        templates_directory = settings.BASIC_EMAIL_DIRECTORY
+        print (templates_directory)
+        return context

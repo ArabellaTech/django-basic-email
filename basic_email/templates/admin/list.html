@@ -12,6 +12,12 @@
 
 {% block content %}
     <div id="content-main">
-        <p>test</p>
+        <ul>
+            {% for f in files %}
+                <li>
+                    <a href="{{f.url}}" target="_blank">{{f.name}}</a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}

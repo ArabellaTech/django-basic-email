@@ -1,0 +1,9 @@
+{% extends "emails/base.html" %}
+
+{% block content %}
+    There were errors on earnest: <br />
+
+    {% for e in errors %}
+        {{e.error.code}} {{e.created}} {{e.user}} {{e.card}} <br/>
+    {% endfor %}
+{% endblock %}

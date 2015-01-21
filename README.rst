@@ -45,6 +45,13 @@ Modify your ``settings.py``. Add ``'basic_email'`` to your
         'basic_email',
     )
 
+Add BASIC_EMAILS_DIRECTORY variable and point it to the directory you will use. Preferred:
+
+.. code-block:: python
+
+    BASIC_EMAIL_DIRECTORY = os.path.join(PROJECT_DIR, 'templates/emails')
+
+
 Usage
 =====
 
