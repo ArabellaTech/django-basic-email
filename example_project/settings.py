@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 
 abspath = lambda *p: os.path.abspath(os.path.join(*p))
 
@@ -58,8 +59,9 @@ COVERAGE_EXCLUDE_MODULES = (
 
 COVERAGE_HTML_REPORT = True
 COVERAGE_BRANCH_COVERAGE = False
-
-try:
-    from local_settings import *
-except ImportError:
-    print "no local_settings.py file?"
+TESTING = ('test' in sys.argv) or ('jenkins' in sys.argv) or ('tox' in sys.argv)
+if not TESTING:
+    try:
+        from local_settings import *
+    except ImportError:
+        print ("no local_settings.py file?")
