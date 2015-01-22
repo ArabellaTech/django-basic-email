@@ -33,8 +33,8 @@
                 <tr>
                     <td>
                         
-                        <h3>Welcome, Elijah Baily</h3>
-                        <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et.</p>
+                        <h3>Welcome, Elijah Baily {{test_template_variable_1}}</h3>
+                        <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et. {{test_template_variable_2}}</p>
                         
                         <!-- A Real Hero (and a real human being) -->
                         <p><img src="http://placehold.it/600x300" /></p><!-- /hero -->
@@ -125,4 +125,7 @@
         <td></td>
     </tr>
 </table><!-- /FOOTER -->
+{% endblock %}
+
+{% block list_variables %}
 {% endblock %}
