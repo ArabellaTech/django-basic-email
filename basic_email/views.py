@@ -23,7 +23,7 @@ class FakeEmailSend(TemplateView):
 
 
 class ListEmailTemplatesView(TemplateView):
-    template_name = "admin/list.html"
+    template_name = os.path.join(os.path.dirname(__file__), 'templates/admin/list.html')
 
     def get_context_data(self, *args, **kwargs):
         context = super(ListEmailTemplatesView, self).get_context_data(*args, **kwargs)
