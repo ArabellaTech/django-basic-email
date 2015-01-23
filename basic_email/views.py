@@ -53,17 +53,12 @@ class ListEmailVariables(TemplateView):
     def get_template_names(self, *args, **kwargs):
         return [self.get_template()]
 
-    def get_template_data(self):
-        from django.template.loader import get_template
-        template_data = get_template(self.get_template())
-        return template_data
-
     def content_encode(self, content):
         content = content.replace('{{', '{##_')
-        to_replace = "{% extends '"
+        to_replace = "{{% extends '{dir}/".format(dir=settings.BASIC_EMAIL_DIRECTORY)
         replacer = "{{#_extends '{dir}/".format(dir=self.sub_tmp_dir)
         content = content.replace(to_replace, replacer)
-        to_replace = '{% extends "'
+        to_replace = '{{% extends "{dir}'.format(dir=settings.BASIC_EMAIL_DIRECTORY)
         replacer = '{{#_extends "{dir}'.format(dir=self.sub_tmp_dir)
         content = content.replace(to_replace, replacer)
 
@@ -77,32 +72,32 @@ class ListEmailVariables(TemplateView):
 
         return content
 
-    def prepare_tmp_file(self, original_file, original_template_name, tmp_dir):
-        f = open(original_file.name, 'r')
-        content = f.read()
-        content = self.content_encode(content)
-        print content
-        # create tmp file with name, save and return
-        path = os.path.join(tmp_dir, self.sub_tmp_dir, original_template_name)
-        dir_name = os.path.dirname(path)
-        if not os.path.exists(dir_name):
-            os.makedirs(dir_name)
-        tmp_f = open(path, 'w+')
-        tmp_f.write(content)
-        tmp_f.close()
-        return tmp_f
+    def prepare_tmp_files(self, tmp_dir):
+        for d in settings.TEMPLATE_DIRS:
+            d = os.path.join(d, settings.BASIC_EMAIL_DIRECTORY)
+            if os.path.exists(d):
+                for file_name in os.listdir(d):
+                    if not os.path.isdir(d + file_name):
+                        f = open(os.path.join(d, file_name), 'r')
+                        content = f.read()
+                        content = self.content_encode(content)
+                        path = os.path.join(tmp_dir, self.sub_tmp_dir, file_name)
+                        dir_name = os.path.dirname(path)
+                        if not os.path.exists(dir_name):
+                            os.makedirs(dir_name)
+                        tmp_f = open(path, 'w+')
+                        tmp_f.write(content)
+                        tmp_f.close()
 
     def list_template_variables(self):
+        # the only way is to parse everything and load data for one. Just like Remi did in
+        # https://bitbucket.org/arabellatech/case.ify/src/56491706a59f33929f76279f248bae38a43f400b/caseify/emails/management/commands/generate_emails.py?at=develop
+        # bad
         tmp_dir = tempfile.mkdtemp()
-        print tmp_dir
-        template_data = self.get_template_data()
         settings.TEMPLATE_DIRS = settings.TEMPLATE_DIRS + (tmp_dir,)
-        tmp_template_file = self.prepare_tmp_file(template_data.origin, template_data.name, tmp_dir)
-        for n in template_data.nodelist:
-            self.prepare_tmp_file(n.get_parent(None).origin, n.get_parent(None).name, tmp_dir)
-        content = render_to_string(tmp_template_file.name.replace(tmp_dir + os.pathsep, ''))
-        print content
-        shutil.rmtree(tmp_dir)  # careful! removes whole tree.
+        self.prepare_tmp_files(tmp_dir)
+        print tmp_dir
+        #shutil.rmtree(tmp_dir)  # careful! removes whole tree.
 
 
 class PreviewEmailView(ListEmailVariables):

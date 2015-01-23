@@ -8,7 +8,7 @@ PROJECT_DIR = os.path.dirname(__file__)
 PROJECT_ROOT = abspath(os.path.dirname(__file__))
 
 SITE_ID = 1
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
