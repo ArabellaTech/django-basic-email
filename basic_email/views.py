@@ -96,7 +96,9 @@ class ListEmailVariables(TemplateView):
         tmp_dir = tempfile.mkdtemp()
         settings.TEMPLATE_DIRS = settings.TEMPLATE_DIRS + (tmp_dir,)
         self.prepare_tmp_files(tmp_dir)
-        print tmp_dir
+        file_name = self.get_template().replace(settings.BASIC_EMAIL_DIRECTORY, self.sub_tmp_dir)
+        content = render_to_string(file_name)
+        print (content)
         #shutil.rmtree(tmp_dir)  # careful! removes whole tree.
 
 
