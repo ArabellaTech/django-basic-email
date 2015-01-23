@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
+import tempfile
+import shutil
+
+from django.template.loader import render_to_string
 from django.views.generic import TemplateView
 from django.template import TemplateDoesNotExist
 from django.conf import settings
@@ -39,6 +43,7 @@ class ListEmailTemplatesView(TemplateView):
 
 
 class ListEmailVariables(TemplateView):
+    sub_tmp_dir = 'emails_tmp'
 
     def get_template(self, *args, **kwargs):
         if not self.request.GET.get('template'):
@@ -55,30 +60,49 @@ class ListEmailVariables(TemplateView):
 
     def content_encode(self, content):
         content = content.replace('{{', '{##_')
+        to_replace = "{% extends '"
+        replacer = "{{#_extends '{dir}/".format(dir=self.sub_tmp_dir)
+        content = content.replace(to_replace, replacer)
+        to_replace = '{% extends "'
+        replacer = '{{#_extends "{dir}'.format(dir=self.sub_tmp_dir)
+        content = content.replace(to_replace, replacer)
+
+        content = content.replace('{% block ', '{#_block ')
+        content = content.replace('{% endblock ', '{#_endblock ')
+        content = content.replace('{%', '{#_')
+        content = content.replace('{{', '{##_')
+        content = content.replace('{#_extends', '{% extends')
+        content = content.replace('{#_block ', '{% block ')
+        content = content.replace('{#_endblock ', '{% endblock ')
+
         return content
 
-    def contend_decode(self, content):
-        content = content.replace('{##', '{{')
-        return content
-
-    def list_template_variables(self):
-        template_data = self.get_template_data()
-        files = []
-        for n in template_data.nodelist:
-            # print ('filename in loop')
-            # print n.get_parent(None).origin
-            # print n.source[0]
-            files.append('%s' % n.get_parent(None).origin)
-        files.append('%s' % template_data.origin)
-        f = open(self.dir + file_name, 'r')
-        # save in tmp using random name: https://docs.python.org/2/library/tempfile.html
-        # add this tmp directory to settings to search for template there. 
+    def prepare_tmp_file(self, original_file, original_template_name, tmp_dir):
+        f = open(original_file.name, 'r')
         content = f.read()
         content = self.content_encode(content)
-        tmp_f = open(self.tmp_dir + file_name, 'w+')
+        print content
+        # create tmp file with name, save and return
+        path = os.path.join(tmp_dir, self.sub_tmp_dir, original_template_name)
+        dir_name = os.path.dirname(path)
+        if not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+        tmp_f = open(path, 'w+')
         tmp_f.write(content)
         tmp_f.close()
-        print files
+        return tmp_f
+
+    def list_template_variables(self):
+        tmp_dir = tempfile.mkdtemp()
+        print tmp_dir
+        template_data = self.get_template_data()
+        settings.TEMPLATE_DIRS = settings.TEMPLATE_DIRS + (tmp_dir,)
+        tmp_template_file = self.prepare_tmp_file(template_data.origin, template_data.name, tmp_dir)
+        for n in template_data.nodelist:
+            self.prepare_tmp_file(n.get_parent(None).origin, n.get_parent(None).name, tmp_dir)
+        content = render_to_string(tmp_template_file.name.replace(tmp_dir + os.pathsep, ''))
+        print content
+        shutil.rmtree(tmp_dir)  # careful! removes whole tree.
 
 
 class PreviewEmailView(ListEmailVariables):
