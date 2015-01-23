@@ -90,16 +90,13 @@ class ListEmailVariables(TemplateView):
                         tmp_f.close()
 
     def list_template_variables(self):
-        # the only way is to parse everything and load data for one. Just like Remi did in
-        # https://bitbucket.org/arabellatech/case.ify/src/56491706a59f33929f76279f248bae38a43f400b/caseify/emails/management/commands/generate_emails.py?at=develop
-        # bad
         tmp_dir = tempfile.mkdtemp()
         settings.TEMPLATE_DIRS = settings.TEMPLATE_DIRS + (tmp_dir,)
         self.prepare_tmp_files(tmp_dir)
         file_name = self.get_template().replace(settings.BASIC_EMAIL_DIRECTORY, self.sub_tmp_dir)
         content = render_to_string(file_name)
         print (content)
-        #shutil.rmtree(tmp_dir)  # careful! removes whole tree.
+        shutil.rmtree(tmp_dir)  # careful! removes whole tree.
 
 
 class PreviewEmailView(ListEmailVariables):
