@@ -45,6 +45,7 @@ class ListEmailTemplatesView(TemplateView):
 
 class PreviewEmailView(TemplateView):
     sub_tmp_dir = 'emails_tmp'
+    tmpl_variable_prefix = '{##_'
 
     def get_email_template(self, *args, **kwargs):
         if not self.request.GET.get('template'):
@@ -74,7 +75,7 @@ class ListEmailVariablesView(PreviewEmailView):
         content = content.replace('{% block ', '{#_block ')
         content = content.replace('{% endblock ', '{#_endblock ')
         content = content.replace('{%', '{#_')
-        content = content.replace('{{', '{##_ ')
+        content = content.replace('{{', self.tmpl_variable_prefix)
         content = content.replace('{#_extends', '{% extends')
         content = content.replace('{#_block ', '{% block ')
         content = content.replace('{#_endblock ', '{% endblock ')
@@ -103,8 +104,10 @@ class ListEmailVariablesView(PreviewEmailView):
         self.prepare_tmp_files(tmp_dir)
         file_name = self.get_email_template().replace(settings.BASIC_EMAIL_DIRECTORY, self.sub_tmp_dir)
         content = render_to_string(file_name)
-        regexp = re.compile('(?<={##_ )\w+')
-        variables = regexp.findall(content)
+        regexp = re.compile(self.tmpl_variable_prefix + '\s*\w+')
+        # this regexp (?<={##_\s+)\w+') will not work since look behind statement requires fixed width expression
+        # need to manually remove prefix
+        variables = [v.replace(self.tmpl_variable_prefix, '').strip() for v in regexp.findall(content)]
         shutil.rmtree(tmp_dir)  # careful! removes whole tree.
         return variables
 
