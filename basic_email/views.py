@@ -2,6 +2,7 @@
 import os
 import tempfile
 import shutil
+import re
 
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView
@@ -54,7 +55,6 @@ class ListEmailVariables(TemplateView):
         return [self.get_template()]
 
     def content_encode(self, content):
-        content = content.replace('{{', '{##_')
         to_replace = "{{% extends '{dir}/".format(dir=settings.BASIC_EMAIL_DIRECTORY)
         replacer = "{{#_extends '{dir}/".format(dir=self.sub_tmp_dir)
         content = content.replace(to_replace, replacer)
@@ -65,7 +65,7 @@ class ListEmailVariables(TemplateView):
         content = content.replace('{% block ', '{#_block ')
         content = content.replace('{% endblock ', '{#_endblock ')
         content = content.replace('{%', '{#_')
-        content = content.replace('{{', '{##_')
+        content = content.replace('{{', '{##_ ')
         content = content.replace('{#_extends', '{% extends')
         content = content.replace('{#_block ', '{% block ')
         content = content.replace('{#_endblock ', '{% endblock ')
@@ -95,8 +95,10 @@ class ListEmailVariables(TemplateView):
         self.prepare_tmp_files(tmp_dir)
         file_name = self.get_template().replace(settings.BASIC_EMAIL_DIRECTORY, self.sub_tmp_dir)
         content = render_to_string(file_name)
-        print (content)
+        regexp = re.compile('(?<={##_ )\w+')
+        variables = regexp.findall(content)
         shutil.rmtree(tmp_dir)  # careful! removes whole tree.
+        return variables
 
 
 class PreviewEmailView(ListEmailVariables):
