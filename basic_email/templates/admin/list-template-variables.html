@@ -1,0 +1,29 @@
+{% extends "admin/index.html" %}
+{% load i18n admin_urls %}
+{% load url from future %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    <a href="{% url 'list-email-templates' %}">{% trans 'Basic Email' %}</a>
+    &rsaquo; {% trans "List Email Template Variables" %}
+
+</div>
+{% endblock %}
+
+{% block content_title %} <h1>{% trans "List Email Template Variables for" %} {{template}}</h1> {% endblock %}
+
+{% block content %}
+    <div id="content-main">
+        <ul>
+            {% for v in template_variables %}
+                <li>
+                    {{v}}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+{% block sidebar %}
+<!-- sidebar doesn't work for some missing viariable -->
+{% endblock %}

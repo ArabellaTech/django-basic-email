@@ -28,23 +28,40 @@ class EmailsTests(TestCase):
         self.client.login(password=self.password, username=self.admin.username)
         response = self.client.get(reverse('list-email-templates'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context[0].get('files')), 4)
+        self.assertEqual(len(response.context[0].get('files')), 1)
 
     def test_preview(self):
-        response = self.client.get(reverse('preview-email-templates'), follow=True)
+        response = self.client.get(reverse('preview-email-template'), follow=True)
         self.assertTemplateNotUsed(response, 'admin/preview.html')
 
         # trying to access w/o template parameter will raise an error
         self.client.login(password=self.password, username=self.admin.username)
-        self.assertRaises(NameError, self.client.get, reverse('preview-email-templates'))
+        self.assertRaises(NameError, self.client.get, reverse('preview-email-template'))
 
         # not existing template
         self.assertRaises(TemplateDoesNotExist, self.client.get,
-                          reverse('preview-email-templates') + '?template=non_existing_fail')
+                          reverse('preview-email-template') + '?template=non_existing_fail')
 
         # proper
-        response = self.client.get(reverse('preview-email-templates') + '?template=email_start.html')
+        response = self.client.get(reverse('preview-email-template') + '?template=email_start.html')
         self.assertEqual(response.status_code, 200)
 
     def test_variables_list(self):
-        pass
+        response = self.client.get(reverse('list-email-template-variables'), follow=True)
+        self.assertTemplateNotUsed(response, 'admin/list-template-variables.html')
+
+        # trying to access w/o template parameter will raise an error
+        self.client.login(password=self.password, username=self.admin.username)
+        self.assertRaises(NameError, self.client.get, reverse('list-email-template-variables'))
+
+        # not existing template
+        self.assertRaises(TemplateDoesNotExist, self.client.get,
+                          reverse('list-email-template-variables') + '?template=non_existing_fail')
+
+        # proper
+        response = self.client.get(reverse('list-email-template-variables') + '?template=email_start.html')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['template_variables']), 3)
+        self.assertEqual(response.context['template_variables'][0], 'test_base_template_variable')
+        self.assertEqual(response.context['template_variables'][1], 'test_template_variable_1')
+        self.assertEqual(response.context['template_variables'][2], 'test_template_variable_2')

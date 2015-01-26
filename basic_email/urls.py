@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
 
-from basic_email.views import FakeEmailSend, ListEmailTemplatesView, PreviewEmailView
+from basic_email.views import FakeEmailSend, ListEmailTemplatesView, PreviewEmailView, ListEmailVariablesView
 from django.contrib.admin.views.decorators import staff_member_required
 
 
@@ -10,5 +10,7 @@ urlpatterns = patterns('',
                        url(r"admin/list/", staff_member_required(ListEmailTemplatesView.as_view()),
                            name='list-email-templates'),
                        url(r"admin/preview/", staff_member_required(PreviewEmailView.as_view()),
-                           name='preview-email-templates'),
+                           name='preview-email-template'),
+                       url(r"admin/list-template-variables/", staff_member_required(ListEmailVariablesView.as_view()),
+                           name='list-email-template-variables'),
                        )

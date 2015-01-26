@@ -43,16 +43,25 @@ class ListEmailTemplatesView(TemplateView):
         return context
 
 
-class ListEmailVariables(TemplateView):
+class PreviewEmailView(TemplateView):
     sub_tmp_dir = 'emails_tmp'
 
-    def get_template(self, *args, **kwargs):
+    def get_email_template(self, *args, **kwargs):
         if not self.request.GET.get('template'):
             raise NameError("?template=... is required")
         return os.path.join(settings.BASIC_EMAIL_DIRECTORY, self.request.GET.get('template'))
 
+    def get_template(self, *args, **kwargs):
+        if self.template_name:
+            return self.template_name
+        return self.get_email_template()
+
     def get_template_names(self, *args, **kwargs):
         return [self.get_template()]
+
+
+class ListEmailVariablesView(PreviewEmailView):
+    template_name = os.path.join(os.path.dirname(__file__), 'templates/admin/list-template-variables.html')
 
     def content_encode(self, content):
         to_replace = "{{% extends '{dir}/".format(dir=settings.BASIC_EMAIL_DIRECTORY)
@@ -69,7 +78,6 @@ class ListEmailVariables(TemplateView):
         content = content.replace('{#_extends', '{% extends')
         content = content.replace('{#_block ', '{% block ')
         content = content.replace('{#_endblock ', '{% endblock ')
-
         return content
 
     def prepare_tmp_files(self, tmp_dir):
@@ -93,17 +101,15 @@ class ListEmailVariables(TemplateView):
         tmp_dir = tempfile.mkdtemp()
         settings.TEMPLATE_DIRS = settings.TEMPLATE_DIRS + (tmp_dir,)
         self.prepare_tmp_files(tmp_dir)
-        file_name = self.get_template().replace(settings.BASIC_EMAIL_DIRECTORY, self.sub_tmp_dir)
+        file_name = self.get_email_template().replace(settings.BASIC_EMAIL_DIRECTORY, self.sub_tmp_dir)
         content = render_to_string(file_name)
         regexp = re.compile('(?<={##_ )\w+')
         variables = regexp.findall(content)
         shutil.rmtree(tmp_dir)  # careful! removes whole tree.
         return variables
 
-
-class PreviewEmailView(ListEmailVariables):
-
     def get_context_data(self, *args, **kwargs):
-        context = super(PreviewEmailView, self).get_context_data(*args, **kwargs)
-        self.list_template_variables()
+        context = super(ListEmailVariablesView, self).get_context_data(*args, **kwargs)
+        context['template_variables'] = self.list_template_variables()
+        context['template'] = self.request.GET.get('template')
         return context
