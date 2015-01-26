@@ -15,6 +15,7 @@
 
 {% block content %}
     <div id="content-main">
+        <p>{% trans "Preview template" %}:  <a href="{% url 'preview-email-template' %}?template={{template}}" target="_blank"> {{template}} {% trans "(new tab)" %}</a></p>
         <ul>
             {% for v in template_variables %}
                 <li>
