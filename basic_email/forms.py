@@ -10,5 +10,5 @@ class EmailPreviewForm(forms.Form):
         extra = kwargs.pop('extra')
         super(EmailPreviewForm, self).__init__(*args, **kwargs)
 
-        for i, f in enumerate(extra):
-            self.fields['%s' % i] = forms.CharField(label=f, required=False)
+        for f in extra:
+            self.fields[f] = forms.CharField(label=f, required=False)
