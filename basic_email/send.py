@@ -15,7 +15,6 @@ cssutils.log.setLevel(logging.CRITICAL)
 def send_email(template, to, subject, variables={}, fail_silently=False,
                replace_variables={}, reply_to=False, attachments=None,
                memory_attachments=None):
-    print (variables)
     variables['site'] = Site.objects.get_current()
     variables['STATIC_URL'] = settings.STATIC_URL
     variables['is_secure'] = getattr(settings, 'IS_SECURE', False)
