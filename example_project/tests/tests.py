@@ -16,7 +16,7 @@ class EmailsTests(TestCase):
         self.client = Client()
 
     def test_send(self):
-        send_email('start', 'foo@bar.com', 'Lorem')
+        send_email('emails/email_start.html', 'foo@bar.com', 'Lorem')
         self.assertEqual(len(mail.outbox), 1)
 
     def test_list(self):
@@ -43,7 +43,7 @@ class EmailsTests(TestCase):
                           reverse('preview-email-template') + '?template=non_existing_fail')
 
         # proper
-        response = self.client.get(reverse('preview-email-template') + '?template=email_start.html')
+        response = self.client.get(reverse('preview-email-template') + '?template=email_start')
         self.assertEqual(response.status_code, 200)
 
     def test_variables_list(self):
@@ -59,7 +59,7 @@ class EmailsTests(TestCase):
                           reverse('list-email-template-variables') + '?template=non_existing_fail')
 
         # proper
-        response = self.client.get(reverse('list-email-template-variables') + '?template=email_start.html')
+        response = self.client.get(reverse('list-email-template-variables') + '?template=email_start')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['template_variables']), 7)
         self.assertEqual(response.context['template_variables'][0], 'emailSubject')

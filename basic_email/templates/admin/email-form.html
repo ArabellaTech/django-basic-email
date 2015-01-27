@@ -12,6 +12,14 @@
 </div>
 {% endblock %}
 
+{% block messages %}
+    {% if success %}
+        <ul class="messagelist">
+            <li class="success">{% trans "Your email has been sent." %}</li>
+        </ul>
+    {% endif %}
+{% endblock messages %}
+
 {% block content_title %} <h1>{% trans "Send Email Preview for" %} {{template}}</h1> {% endblock %}
 
 {% block form %}

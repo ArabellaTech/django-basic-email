@@ -6,6 +6,9 @@ from django.utils.translation import ugettext_lazy as _
 class EmailPreviewForm(forms.Form):
     email = forms.EmailField(label=_("Receiver"))
 
-    def send_email(self):
-        # send email using the self.cleaned_data dictionary
-        pass
+    def __init__(self, *args, **kwargs):
+        extra = kwargs.pop('extra')
+        super(EmailPreviewForm, self).__init__(*args, **kwargs)
+
+        for i, f in enumerate(extra):
+            self.fields['%s' % i] = forms.CharField(label=f, required=False)
