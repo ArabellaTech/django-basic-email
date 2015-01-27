@@ -4,11 +4,15 @@ import tempfile
 import shutil
 import re
 
+from django.core.urlresolvers import reverse_lazy
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView
+from django.views.generic.edit import FormMixin
 from django.template import TemplateDoesNotExist
 from django.conf import settings
+
 from basic_email.send import send_email
+from basic_email.forms import EmailPreviewForm
 
 
 class FakeEmailSend(TemplateView):
@@ -44,8 +48,6 @@ class ListEmailTemplatesView(TemplateView):
 
 
 class PreviewEmailView(TemplateView):
-    sub_tmp_dir = 'emails_tmp'
-    tmpl_variable_prefix = '{##_'
 
     def get_email_template(self, *args, **kwargs):
         if not self.request.GET.get('template'):
@@ -62,6 +64,8 @@ class PreviewEmailView(TemplateView):
 
 
 class ListEmailVariablesView(PreviewEmailView):
+    sub_tmp_dir = 'emails_tmp'
+    tmpl_variable_prefix = '{##_'
     template_name = os.path.join(os.path.dirname(__file__), 'templates/admin/list-template-variables.html')
 
     def content_encode(self, content):
@@ -116,3 +120,31 @@ class ListEmailVariablesView(PreviewEmailView):
         context['template_variables'] = self.list_template_variables()
         context['template'] = self.request.GET.get('template')
         return context
+
+
+class SendEmailPreviewView(ListEmailVariablesView, FormMixin):
+    template_name = os.path.join(os.path.dirname(__file__), 'templates/admin/email-form.html')
+    form_class = EmailPreviewForm
+    success_url = reverse_lazy('list-email-templates')  # fixme - better success url
+
+    def get_context_data(self, **kwargs):
+        context = super(SendEmailPreviewView, self).get_context_data(**kwargs)
+        context['form'] = self.get_form(self.form_class)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form(self.form_class)
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        form.send_email()
+        # in normal flow it will redirect. The idea is to show PreviewEmailView with this data
+        # ideas:
+        # - get template with post as context and return it just as PreviewEmailView
+        # - or put it into iframe (hard one)
+        return super(ListEmailVariablesView, self).form_valid(form)

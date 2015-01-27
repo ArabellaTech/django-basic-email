@@ -5,6 +5,7 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
     <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo;
     <a href="{% url 'list-email-templates' %}">{% trans 'Basic Email' %}</a>
     &rsaquo; {% trans "List Email Template Variables" %}
 
@@ -23,6 +24,8 @@
                 </li>
             {% endfor %}
         </ul>
+        {% block form %}
+        {% endblock %}
     </div>
 {% endblock %}
 {% block sidebar %}

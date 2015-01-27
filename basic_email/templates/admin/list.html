@@ -17,8 +17,13 @@
             {% for f in files %}
                 <li>
                     <a href="{% url 'preview-email-template' %}?template={{f}}" target="_blank">preview {{f}} ({% trans "new tab" %})</a>
+                    | 
                     <a href="{% url 'list-email-template-variables' %}?template={{f}}">
-                        {% trans "(list all template variables)" %}
+                        {% trans "list all template variables" %}
+                    </a>
+                    | 
+                    <a href="{% url 'send-email-preview' %}?template={{f}}">
+                        {% trans "send preview"%}
                     </a>
                 </li>
             {% endfor %}
