@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import logging
 import cssutils
+import html2text
 
 from django.contrib.sites.models import Site
 from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 
 from premailer import Premailer
@@ -39,9 +40,12 @@ def send_email(template, to, subject, variables={}, fail_silently=False,
     headers = {}
     if reply_to:
         headers['Reply-To'] = reply_to
-    email = EmailMessage(subject, html, settings.DEFAULT_FROM_EMAIL, [to],
-                         headers=headers)
-    email.content_subtype = "html"
+    text = html2text.HTML2Text()
+    text.ignore_images = True
+    text = text.handle(html)
+    email = EmailMultiAlternatives(subject, text, settings.DEFAULT_FROM_EMAIL, [to],
+                                   headers=headers)
+    email.attach_alternative(html, "text/html")
     if attachments:
         for attachment in attachments:
             email.attach_file(attachment)
