@@ -55,7 +55,7 @@ Add BASIC_EMAILS_DIRECTORY variable and point it to the directory you will use. 
 Usage
 =====
 
-Create template ``emails/email_example.html`` and send email:
+Create template ``emails/email_example.html`` and txt version ``emails/email_example.txt``. If txt version is not available it will use html2text converted html version. Send email:
 
 .. code-block:: python
 
@@ -63,7 +63,7 @@ Create template ``emails/email_example.html`` and send email:
     send_email('example', 'joe@doe.com', 'Hello')
 
 Options:
- - ``template`` template name from scheme ``emails/email_<name>.html``
+ - ``template`` template name from scheme ``emails/email_<name>.html`` (txt version is derived from this name by changing extension)
  - ``email`` - receiver email
  - ``subject`` - subject email
  - ``variables`` - dict with variables to pass to template render

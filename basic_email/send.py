@@ -4,7 +4,7 @@ import cssutils
 import html2text
 
 from django.contrib.sites.models import Site
-from django.template.loader import render_to_string
+from django.template.loader import render_to_string, TemplateDoesNotExist
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 
@@ -19,7 +19,7 @@ def send_email(template, to, subject, variables={}, fail_silently=False,
     variables['site'] = Site.objects.get_current()
     variables['STATIC_URL'] = settings.STATIC_URL
     variables['is_secure'] = getattr(settings, 'IS_SECURE', False)
-    html = render_to_string('%s' % (template), variables)
+    html = render_to_string(template, variables)
     protocol = 'https://' if variables['is_secure'] else 'http://'
     replace_variables['protocol'] = protocol
     domain = variables['site'].domain
@@ -40,9 +40,15 @@ def send_email(template, to, subject, variables={}, fail_silently=False,
     headers = {}
     if reply_to:
         headers['Reply-To'] = reply_to
-    text = html2text.HTML2Text()
-    text.ignore_images = True
-    text = text.handle(html)
+
+    # try to get text template, if not use text version of html
+    txt_template = template.replace('html', 'txt')
+    try:
+        text = render_to_string(txt_template, variables)
+    except TemplateDoesNotExist:
+        text = html2text.HTML2Text()
+        text.ignore_images = True
+        text = text.handle(html)
     email = EmailMultiAlternatives(subject, text, settings.DEFAULT_FROM_EMAIL, [to],
                                    headers=headers)
     email.attach_alternative(html, "text/html")

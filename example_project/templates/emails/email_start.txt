@@ -1,0 +1,12 @@
+Text version of email
+
+Welcome, Elijah Baily {{test_template_variable_1}}
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et. {{test_template_variable_2}}
+                        
+                        
+Testing variable 3 {{ test_template_variable_3 }}
+
+Testing variable 4 {{  test_template_variable_4 }}
+
+Testing variable 5 {{       test_template_variable_5 }}
