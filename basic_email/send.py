@@ -2,6 +2,7 @@
 import logging
 import cssutils
 import html2text
+import lxml.html
 
 from django.contrib.sites.models import Site
 from django.template.loader import render_to_string, TemplateDoesNotExist
@@ -13,13 +14,15 @@ from premailer import Premailer
 cssutils.log.setLevel(logging.CRITICAL)
 
 
-def send_email(template, to, subject, variables={}, fail_silently=False,
+def send_email(template, to, subject=None, variables={}, fail_silently=False,
                replace_variables={}, reply_to=False, attachments=None,
                memory_attachments=None):
     variables['site'] = Site.objects.get_current()
     variables['STATIC_URL'] = settings.STATIC_URL
     variables['is_secure'] = getattr(settings, 'IS_SECURE', False)
     html = render_to_string(template, variables)
+    if subject is None:
+        subject = lxml.html.document_fromstring(html).find(".//title").text
     protocol = 'https://' if variables['is_secure'] else 'http://'
     replace_variables['protocol'] = protocol
     domain = variables['site'].domain

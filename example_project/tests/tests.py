@@ -76,9 +76,11 @@ class EmailsTests(TestCase):
         self._test_variables_list_response(response)
 
         data = {
-            'email': 'foo@bar.com'
+            'email': 'foo@bar.com',
+            'emailSubject': 'test subject'
         }
         response = self.client.post(reverse('send-email-preview') + '?template=email_start', data)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['success'])
         self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'test subject')

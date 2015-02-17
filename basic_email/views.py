@@ -24,7 +24,7 @@ class FakeEmailSend(TemplateView):
         context['email'] = getattr(settings, 'FAKE_EMAIL_TO', None)
         if context['template'] and context['email']:
             try:
-                send_email(context['template'], context['email'], 'Fake email!')
+                send_email(context['template'], context['email'])
             except TemplateDoesNotExist:
                 context['template_does_not_exist'] = True
         return context
@@ -142,7 +142,7 @@ class SendEmailPreviewView(ListEmailVariablesView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        send_email(self.get_email_template(), form.cleaned_data.get('email'), 'Fake email!', form.cleaned_data)
+        send_email(self.get_email_template(), form.cleaned_data.get('email'), variables=form.cleaned_data)
         context = self.get_context_data()
         context['form'] = form
         context['success'] = True
